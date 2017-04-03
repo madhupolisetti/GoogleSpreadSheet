@@ -1,0 +1,331 @@
+<!--
+
+// This is the markup of the "SmsSettings.html" HTML file of the Spreadsheet where the source code lives.
+// @ Source Sheet: https://script.google.com/macros/d/MP7J2r1pf6COdv5q-h04adXGX9fKgVtti/edit?uiv=2&mid=ACjPJvFDwhM6hb3Kp0JzLJA14t2yZ9ZmGJORrPkcyOX1w5vbsGa4Axfb0vRh6xK8sFMns_WD9S-nzwjTytFbig8Vg7bWFxrO57kARYgWJkYRF7kMl1bmTlhekVBVvDH3IkqX9tcrqYOgFDY
+
+-->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <?!= include("CSS"); ?>
+  </head>
+  <body>
+    
+    <div id="container-wrapper" class="container-fluid">
+    
+    <div id="mask"></div>
+    
+    <!--MODAL1-->
+         <div class="modal fade" id="smsModal" role="dialog">
+          <div id="dialog-modal" class="modal-dialog modal-lg">
+           <div class="modal-content">
+            <div class="modal-header">
+             <button type="button" class="close">&times;</button>
+              <img src="https://dl.dropboxusercontent.com/s/qpuwb5jdztb7op9/SMSCountry-logo-white.png?dl=0" alt="SMS Login Header Logo">
+             </div>
+             <div class="modal-body"></div>
+             <div class="modal-footer">
+             <div id="model-btn-wrapper">
+             <button id="send-sms-form" form="sms-form1" type="submit" class="action">Send SMS</button>
+             <button id="close-modal" type="button">Cancel</button>
+             </div>
+            </div>
+           </div>
+          </div>
+         </div>
+         
+    <div class="row addon-brand">
+      <div class="col-sm-12">
+       <img src="https://dl.dropboxusercontent.com/s/qpuwb5jdztb7op9/SMSCountry-logo-white.png?dl=0" alt="SMS Login Header Logo">
+      </div>
+    </div>
+     
+     <div id="content-wrapper">
+     
+      <div class="header">
+       <h3><i class="fa fa-mobile" aria-hidden="true"></i>  Send SMS</h3>
+      </div>
+      
+      <div class="content">
+      
+       <div id="sms-content" class="row sms-container">
+       
+        <div class="col-xs-8 sms-settings">
+        
+        <table>
+         <tr>  
+          <td><label>Language</label></td>
+          <td>
+           <select id="language-origin" disabled></select>
+          </td>
+          <td><label>Translate To:</label></td>
+          <td>
+           <select id="languages" disabled></select>
+          </td>
+          <!--<td>
+           <div>
+           <button class="action translate" type="button">Translate</button>
+           </div>
+          </td>-->
+          <td>
+          <div>
+           <input id="enableTranslate" type="checkbox" name="translateChckBx">
+           <label for="enableTranslate">Enable Translation</label>
+          </div>
+          </td>
+         </tr>
+        </table>
+        
+        <form id="sms-form1" class="sms-form" role="form" onsubmit="handleSmsForm(this)">
+        
+        <div class="row inner-sms-setting">
+
+         <div class="col-sm-8 text-box">
+    
+         <div class="form-group">
+          <label for="textbox" class="sr-only">SMS Template</label>
+          <textarea id="textbox" class="form-control" placeholder="Enter SMS Text Message (Msg)" name="smstextarea" wrap="hard"></textarea>
+          <span id="charCount"><span id="charCountNum"></span>/<span id="charCountBase"></span></span>
+         </div>
+         <div id="translation">
+          <div id="translation-header">Translated Text</div>
+          <div class="translated-text"><span style="color: #999;">waiting...</span></div>
+         </div>
+         </div>
+         
+         <div class="col-sm-4 col-headers">
+          
+          <label for="add-to-column-text" class="sr-only"></label>
+          <select id="add-to-column-text" name="addToColumn" multiple>
+           <? var columns = getColumns(); ?>
+           <? for(var i = 0; i < columns.length; i++) { ?>
+            <option value="<?= columns[i] ?>"><?= columns[i] ?></option>
+           <? } ?>
+          </select>
+          <button class="share send-sms-btns add-to-column" type="button"><span class="glyphicon glyphicon-arrow-left"></span> Add Column to Text</button>
+         </div>
+
+         <!--</form><!--END OF SMS FORM-->
+         
+        </div><!--inner-sms-setting-->
+
+        <div class="row inner-sms-setting2">
+         
+         <div class="col-sm-8 save-msg">         
+         
+          <div class="inline form-group">
+          <input type="checkbox" id="saveMsg" name="saveMsg">
+          <? var saveMsgDesc = 'All saved templates require approval from SMS Country. Templates will be available once approved.' ?>
+          <label for="saveMsg">Save Message</label> <span class="glyphicon glyphicon-question-sign savemsghelp" aria-hidden="true" data-toggle="tooltip" title="<?= saveMsgDesc ?>"></span>
+         </div>
+          <div class="inline form-group select-msg-temp">
+          <label for="select-saved" class="sr-only">Select Message</label>
+          <select id="select-saved" name="smsTemplate">
+          <option value="Select Message">Select Message</option>
+          </select>
+         </div>
+
+         <button id="save-msg-btn" type="button">Delete</button>
+         
+         
+         
+         <div class='message'>
+         <div class='check'>
+         &#10004;
+         </div>
+         <p class="success-title">
+         Success
+         </p>
+         <p class="message-success">
+         Message template has been saved!
+         </p>
+         <button id='ok' class="share" type="button">
+         OK
+         </button>
+         </div>
+         
+         </div>
+         <div class="col-sm-4 display-saved-msg">
+          <div>
+           
+          </div>
+         </div>
+         
+        </div><!--inner-sms-setting2-->
+        
+        <div class="row inner-sms-setting3">
+         <div class="col-sm-5">
+         
+          <div class="inline form-group">
+            <input type="radio" name="filterrows" id="filterrows" value="rowFilters">
+            <label for="filterrows" class="sr-only">Filter by Row</label>
+          </div>
+          <div class="inline form-group">
+            <label for="start-row">Start Row</label>
+            <input type="number" id="start-row" style="width: 50px;" name="startRow" min="1">
+          </div>
+           <div class="inline form-group">
+           <label for="end-row">End Row</label>
+           <input type="number" id="end-row" style="width: 50px;" name="endRow" min="1">
+          </div>
+          
+         </div>
+         
+         <div class="col-sm-4">
+         
+          <div class="inline form-group">
+            <input type="radio" name="filterrows" id="filterbyRange" value="filterbyRange">
+            <label for="filterbyRange" class="sr-only">Filter by Range</label>
+          </div>
+          <div class="inline form-group">
+            <label for="range-row">Row Ranges</label>
+            <input type="text" id="range-row" name="rowRanges" style="width: 80px;">
+          </div> 
+          
+         </div>
+         
+         <div class="col-sm-3">
+         
+          <div class="form-group">
+            <label for="selectAll" class="radio-inline"><input type="radio" name="filterrows" id="selectAll" value="selectAll">Select All</label>
+          </div>
+          
+         </div>
+         
+        </div><!--inner-sms-setting3-->
+        
+        <div class="row inner-sms-setting4">
+        
+         <div class="col-sm-4 mobile-column">
+          <div class="block form-group">
+          
+          <? mobileDesc = 'The column letter that contains the phone numbers where the messages will be sent.' ?>
+          
+           <label for="select">Mobile Numbers Column</label> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="<?= mobileDesc ?>"></span>
+           <select id="select" class="form-control" name="mobileNumberColumn">
+           
+            <? var columns = getColumns(); ?>
+            <? for(var i = 0; i < columns.length; i++) { ?>
+            
+            <option value="<?= columns[i] ?>"><?= columns[i] ?></option>
+            
+            <? } ?>
+            
+           </select>
+          </div>
+         </div>
+         <div class="col-sm-4 ignore-duplicates">
+          <div>
+           <input id="skipDups" type="checkbox" name="ignoreDups">
+           <label for="skipDups">Remove Duplicates</label>
+          </div>
+         </div>
+         
+         <div class="col-sm-4 select-sender-id">
+          <div class="block form-group">
+           <label for="select-senderId">Select Sender ID</label>
+           
+           <? var senderIdDesc = 'Name of the sender that will appear on the recipient\'s mobile phone when they receive an SMS Text message.' ?>
+           
+           <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" title="<?= senderIdDesc ?>"></span><select id="select-senderId" class="form-control" type="text" autocomplete="on" name="senderId">
+            
+            <? var senders = getSenderId(); ?>
+            
+            <? if(senders.Success == 'False') { ?>
+      
+               <option value="No Sender IDs">No Sender IDs</option>
+            
+            <? } else if(senders.Success == 'True' && senders.Message == 'No Senders IDs') { ?>
+            
+               <option value="No Sender IDs">No Sender IDs</option>
+            
+            <? } else { ?>
+            
+             <? for(var k = 0; k < senders.SenderIds.length; k++) { ?>
+             <? var sender = senders.SenderIds[k] ?>
+             
+             <option value="<?!= sender ?>"><?!= sender ?></option>
+             
+             <? } ?>
+            
+            <? } ?>
+            
+           </select>
+          </div>
+         </div>
+         
+         
+        
+        </div><!--inner-sms-setting4-->
+        
+         </form>
+        
+        <div class="row inner-sms-setting5">
+        
+         <div class="col-sm-6 other-options">
+          <div>
+           <input id="preview" type="checkbox" name="preview" value="checked">
+           <label for="preview">Preview and Send</label>
+          </div>
+         </div>
+        
+        </div><!--inner-sms-setting5-->
+        
+        
+        
+        </div><!--sms-settings-->
+        
+        <div class="col-xs-4 side-panel">
+         <div>
+         Select Column Name to replace the text with value in that column. For Ex: Dear #B# where B is the column which contains the names of all recipients.
+         <!--<img src="https://dl.dropboxusercontent.com/s/qstxtg3lydrfaqv/smscountry_squarelogo.png?dl=0">-->
+         <img src="https://dl.dropboxusercontent.com/s/s2t3b1g1yata806/smscountry-logo.gif?dl=0">
+         
+         <div id="side-panel-btn-wrapper">
+         <a href="http://smscountry.com/contact-us.aspx" class="help-logo" target="_blank">Facing a problem? Contact us!</a>
+         </div>
+         
+         <p>
+         Enter either Start, End rows OR, enter the Range of rows. Example: 2-19, 27-35.
+         </p>
+         
+         <div id="side-panel-btn-wrapper">
+         <button id="send-sms" class="panel-btns action" type="button">Send</button>
+         <!--<button class="panel-btns">Filter</button>-->
+         <button class="panel-btns cancel">Cancel</button>
+         </div>
+         
+         </div>
+         
+        </div>
+       </div><!--sms-container-->
+       
+      </div><!--Content-->
+      
+      <div class="footer">
+       <p></p>
+      </div>
+     
+      <div class="loading-wrapper">
+       <div class="loading"><img src="https://dl.dropboxusercontent.com/s/ycd5sx5x4xh8xvj/loading_gif.gif?dl=0" alt="SMS Login Header Logo"><h4>Processing...</h4></div>
+      </div>
+      
+      <!--<div id="progress"></div>-->
+      
+     </div><!--Content Wrapper-->
+     
+    </div><!--Container Wrapper-->
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <?!= include("JS"); ?>
+    <?!= include("Language"); ?>
+  </body>
+</html>
